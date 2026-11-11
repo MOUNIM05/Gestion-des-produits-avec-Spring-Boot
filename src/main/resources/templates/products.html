@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head><title>Catalogue produits</title></head>
+<body><div layout:fragment="content">
+    <div class="page-heading"><div><p class="eyebrow">INVENTAIRE</p><h1>Catalogue produits <span class="title-count" th:text="${products.totalElements}"></span></h1><p class="text-muted mb-0">Vos références et leurs disponibilités, au même endroit.</p></div><a th:if="${canManage}" th:href="@{/products/new}" class="btn btn-primary"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Nouveau produit</a></div>
+    <section class="panel">
+        <form class="catalog-toolbar" th:action="@{/products}" method="get" role="search">
+            <div class="search-field"><label class="visually-hidden" for="keyword">Rechercher par nom</label><i class="bi bi-search" aria-hidden="true"></i><input class="form-control" id="keyword" name="keyword" maxlength="120" th:value="${keyword}" placeholder="Rechercher un produit…"></div>
+            <label class="visually-hidden" for="sort">Trier par</label><select id="sort" name="sort" class="form-select sort-select"><option value="name" th:selected="${sort == 'name'}">Trier par nom</option><option value="price" th:selected="${sort == 'price'}">Trier par prix</option></select>
+            <label class="visually-hidden" for="direction">Ordre du tri</label><select id="direction" name="direction" class="form-select sort-select"><option value="asc" th:selected="${direction == 'asc'}">Croissant</option><option value="desc" th:selected="${direction == 'desc'}">Décroissant</option></select>
+            <label class="visually-hidden" for="size">Produits par page</label><select id="size" name="size" class="form-select size-select"><option th:each="s : ${pageSizes}" th:value="${s}" th:text="|${s} / page|" th:selected="${size == s}"></option></select>
+            <button class="btn btn-primary" type="submit">Rechercher</button><a class="btn btn-light" th:href="@{/products}" title="Réinitialiser la recherche" aria-label="Réinitialiser la recherche"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i></a>
+        </form>
+        <div th:if="${products.empty}" class="empty-state"><i class="bi bi-inbox" aria-hidden="true"></i><h2>Aucun produit trouvé</h2><p th:text="${#strings.isEmpty(keyword) ? 'Votre catalogue est prêt à accueillir ses premiers produits.' : 'Essayez un autre nom ou réinitialisez votre recherche.'}"></p><a th:if="${canManage and #strings.isEmpty(keyword)}" class="btn btn-primary" th:href="@{/products/new}">Ajouter un produit</a></div>
+        <div th:unless="${products.empty}" class="table-responsive"><table class="table product-table align-middle mb-0">
+            <thead><tr><th scope="col">ID</th><th scope="col">Nom</th><th scope="col">Description</th><th scope="col" class="text-end">Prix</th><th scope="col">Quantité</th><th scope="col" th:if="${canManage}" class="text-end">Actions</th></tr></thead>
+            <tbody><tr th:each="product : ${products.content}">
+                <td class="reference" th:text="|#${product.id}|"></td>
+                <td><strong th:text="${product.name}"></strong></td>
+                <td class="description-cell" th:text="${#strings.isEmpty(product.description) ? '—' : product.description}"></td>
+                <td class="text-end price-cell"><span th:text="${#numbers.formatDecimal(product.price, 1, 'WHITESPACE', 2, 'COMMA')}"></span><small> MAD</small></td>
+                <td><span class="stock-badge" th:classappend="${product.quantity == 0 ? 'out' : (product.quantity <= lowStockThreshold ? 'low' : 'available')}" th:text="|${product.quantity} en stock|"></span></td>
+                <td th:if="${canManage}" class="text-end"><div class="action-group">
+                    <a class="btn btn-light btn-sm" th:href="@{/products/edit/{id}(id=${product.id})}" th:aria-label="|Modifier ${product.name}|"><i class="bi bi-pencil" aria-hidden="true"></i><span class="visually-hidden">Modifier</span></a>
+                    <form th:action="@{/products/delete/{id}(id=${product.id})}" method="post" data-confirm="Supprimer définitivement ce produit ?">
+                        <button class="btn btn-delete btn-sm" type="submit" th:aria-label="|Supprimer ${product.name}|"><i class="bi bi-trash3" aria-hidden="true"></i><span class="visually-hidden">Supprimer</span></button>
+                    </form></div></td>
+            </tr></tbody>
+        </table></div>
+        <div class="pagination-bar" th:if="${products.totalPages > 0}"><span th:text="|Page ${products.number + 1} sur ${products.totalPages} · ${products.totalElements} produit(s)|"></span>
+            <nav aria-label="Pagination des produits"><ul class="pagination pagination-sm mb-0">
+                <li class="page-item" th:classappend="${products.first ? 'disabled' : ''}"><a class="page-link" th:href="@{/products(page=${products.number - 1},size=${size},keyword=${keyword},sort=${sort},direction=${direction})}" th:tabindex="${products.first ? -1 : 0}" th:aria-disabled="${products.first}" aria-label="Page précédente"><i class="bi bi-chevron-left" aria-hidden="true"></i></a></li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(pageStart, pageEnd)}" th:classappend="${i == products.number ? 'active' : ''}"><a class="page-link" th:href="@{/products(page=${i},size=${size},keyword=${keyword},sort=${sort},direction=${direction})}" th:text="${i + 1}" th:aria-current="${i == products.number ? 'page' : null}"></a></li>
+                <li class="page-item" th:classappend="${products.last ? 'disabled' : ''}"><a class="page-link" th:href="@{/products(page=${products.number + 1},size=${size},keyword=${keyword},sort=${sort},direction=${direction})}" th:tabindex="${products.last ? -1 : 0}" th:aria-disabled="${products.last}" aria-label="Page suivante"><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>
+            </ul></nav>
+        </div>
+    </section>
+    <p class="catalog-note"><span class="status-dot"></span> Les produits avec 5 unités ou moins sont signalés automatiquement.</p>
+</div></body></html>

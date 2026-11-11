@@ -1,0 +1,3 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head><title>Accès refusé</title></head><body><section layout:fragment="content" class="panel error-panel"><span class="error-code">403</span><i class="bi bi-shield-lock error-icon" aria-hidden="true"></i><h1>Accès refusé</h1><p>Votre compte permet de consulter le catalogue. La gestion des produits est réservée aux administrateurs.</p><a class="btn btn-primary" th:href="@{/products}">Retour au catalogue</a></section></body></html>

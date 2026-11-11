@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Connexion · StockPilot</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body class="login-page">
+    <main class="login-shell"><section class="login-intro"><a class="brand" th:href="@{/}"><span class="brand-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>StockPilot<span class="brand-dot">.</span></a><div><span class="pill">VOTRE ESPACE DE GESTION</span><h1>Moins de complications.<br>Plus de visibilité.</h1><p>Un seul espace pour organiser vos produits et garder le contrôle de votre inventaire.</p><div class="login-illustration" aria-hidden="true"><i class="bi bi-box-seam"></i><i class="bi bi-check-circle-fill"></i></div></div><small>Gestion de produits · Spring Boot &amp; Thymeleaf</small></section>
+    <section class="login-form-area"><div class="login-form-wrap"><span class="stat-icon violet mb-4"><i class="bi bi-person-lock" aria-hidden="true"></i></span><p class="eyebrow">BIENVENUE SUR STOCKPILOT</p><h2>Connectez-vous</h2><p class="text-muted mb-4">Retrouvez votre catalogue et votre tableau de bord.</p>
+        <div th:if="${param.error != null}" class="alert alert-danger" role="alert">Identifiant ou mot de passe incorrect.</div>
+        <div th:if="${param.logout != null}" class="alert alert-success" role="status">Vous êtes déconnecté.</div>
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3"><label class="form-label" for="username">Nom d'utilisateur</label><input id="username" name="username" class="form-control" autocomplete="username" required autofocus placeholder="Votre identifiant"></div>
+            <div class="mb-4"><label class="form-label" for="password">Mot de passe</label><input id="password" name="password" type="password" class="form-control" autocomplete="current-password" required placeholder="Votre mot de passe"></div>
+            <button type="submit" class="btn btn-primary w-100">Se connecter <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i></button>
+        </form><p class="login-footnote"><i class="bi bi-shield-lock me-1" aria-hidden="true"></i> Accès sécurisé à votre inventaire.</p>
+    </div></section></main>
+</body></html>
